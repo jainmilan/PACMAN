@@ -55,7 +55,7 @@ def run_regressor_classifier_model_1(df_pred, Tset, fregr, fclass):
     for idx in df_pred.index:
 
         # Predict temperature difference
-        diff = regr.predict([p1, p2, p3])
+        diff = regr.predict([[p1, p2, p3]])
 
         # Predict temperature
         df_pred.loc[idx+1, "T_pred"] = v + diff[0]
@@ -65,7 +65,7 @@ def run_regressor_classifier_model_1(df_pred, Tset, fregr, fclass):
         text = df_pred.loc[idx+1, "ext_temperature"]
 
         p1 = text - v
-        p2 = clf.predict([v - Tset, diff])[0]
+        p2 = clf.predict([[v - Tset, diff]])[0]
         p3 = numpy.divide(text, 30)
 
         # Predicted AC compressor state
@@ -123,7 +123,7 @@ def run_regressor_classifier_model_2(df_pred, Tset, fregr, fclass):
     for idx in df_pred.index:
 
         # Predict temperature difference
-        diff = regr.predict([p1, p2])
+        diff = regr.predict([[p1, p2]])
 
         # Predict temperature
         df_pred.loc[idx+1, "T_pred"] = v + diff[0]
@@ -133,7 +133,7 @@ def run_regressor_classifier_model_2(df_pred, Tset, fregr, fclass):
         text = df_pred.loc[idx+1, "ext_temperature"]
 
         p1 = text - v
-        p2 = clf.predict([v - Tset, diff])[0]
+        p2 = clf.predict([[v - Tset, diff]])[0]
 
         # Predicted AC compressor state
         df_pred.loc[idx+1, "S_pred"] = p2
@@ -191,7 +191,7 @@ def run_regressor_classifier_model_3(df_pred, Tset, fregr, fclass):
     for idx in df_pred.index:
 
         # Predict temperature difference
-        diff = regr.predict([p1, p2, p3])
+        diff = regr.predict([[p1, p2, p3]])
 
         # Predict temperature
         df_pred.loc[idx+1, "T_pred"] = v + diff[0]
@@ -201,7 +201,7 @@ def run_regressor_classifier_model_3(df_pred, Tset, fregr, fclass):
         text = df_pred.loc[idx+1, "ext_temperature"]
 
         p1 = v/25
-        p2 = clf.predict([v - Tset, diff[0]])[0]
+        p2 = clf.predict([[v - Tset, diff[0]]])[0]
         p3 = text/25
 
         # Predicted AC compressor state
@@ -259,7 +259,7 @@ def run_regressor_classifier_model_4(df_pred, Tset, fregr, fclass):
     for idx in df_pred.index:
 
         # Predict temperature difference
-        v = regr.predict([p1, p2])[0]
+        v = regr.predict([[p1, p2]])[0]
 
         # Predict temperature
         df_pred.loc[idx+1, "T_pred"] = v
@@ -268,7 +268,7 @@ def run_regressor_classifier_model_4(df_pred, Tset, fregr, fclass):
         diff = v - df_pred.loc[idx, "T_pred"]
 
         p1 = v
-        p2 = clf.predict([v - Tset, diff])[0]
+        p2 = clf.predict([[v - Tset, diff]])[0]
 
         # Predicted AC compressor state
         df_pred.loc[idx+1, "S_pred"] = p2
@@ -328,7 +328,7 @@ def run_regressor_classifier_model_5(df_pred, Tset, fregr):
     for idx in df_pred.index:
 
         # Predict temperature difference
-        v = regr.predict([p1, p2])[0]
+        v = regr.predict([[p1, p2]])[0]
 
         # Predict temperature
         df_pred.loc[idx+1, "T_pred"] = v

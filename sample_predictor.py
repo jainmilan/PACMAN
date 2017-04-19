@@ -78,7 +78,7 @@ if __name__ == "__main__":
             # Resample intermediate data to 1 second frequency for alignment
             idx = pd.to_datetime(data.index, unit='s').tz_localize('UTC').tz_convert('Asia/Kolkata')
             data.index = idx
-            data = data.resample('1S', fill_method='bfill')
+            data = data.resample('1S').bfill()
 
             # Preprocessing [Select only valid usages]
             usages = usages[usages["type"] == 1]
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 sys.exit(1)
             else:
                 data["ext_temperature_unsmooth"] = data["ext_temperature"]
-                data["ext_temperature"] = pd.rolling_mean(data.ext_temperature, 7200)
+                data["ext_temperature"] = data.ext_temperature.rolling(window=7200,center=False).mean()
                 data = data.dropna()
 
             # Iterate over all the AC usages that occured in the room
@@ -131,7 +131,7 @@ if __name__ == "__main__":
                 df = data.loc[sidx:fidx][["int_temperature", "ext_temperature", "power", "status"]]
 
                 # Resample to the given sampling rate
-                df_resampled = df.resample(sampling_rate, how='first')
+                df_resampled = df.resample(sampling_rate).first()
 
                 # Skip prediction for first usage
                 if not done_regr is None:

@@ -59,7 +59,7 @@ def learning_df(usages, last_usage, data, sampling_rate, pusages=-1):
         df_temp.loc[:, "Tset"] = Tset
 
         # Resample the selected dataset
-        df_temp = df_temp.resample(sampling_rate, how='first')
+        df_temp = df_temp.resample(sampling_rate).first()
 
         # Check if data is atleast of one-hour duration
         if len(df_temp) < 30:
@@ -102,7 +102,7 @@ def learning_df(usages, last_usage, data, sampling_rate, pusages=-1):
             df_temp.loc[:, "Tset"] = Tset
 
             # Resample to desired frequency and merge with the combined data frame
-            df_temp = df_temp.resample(sampling_rate, how='first')
+            df_temp = df_temp.resample(sampling_rate).first()
             df = pandas.concat([df, df_temp])
 
     # Return empty frame if data size is less than an hour
