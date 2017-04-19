@@ -1,2 +1,4 @@
 Backup/
 **/.pyc
+**/.DS_store
+/logs/
