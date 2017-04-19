@@ -23,17 +23,6 @@ def get_time(date_str, time_str):
     return val_dt
 
 
-def update_param(df_act, df_learned, count):
-    if df_act.empty:
-        return df_learned
-
-    df_act["alpha"] = ((df_act["alpha"])*(count-1) + df_learned["alpha"])/count
-    df_act["beta"] = ((df_act["beta"])*(count-1) + df_learned["beta"])/count
-    df_act["gamma"] = ((df_act["gamma"])*(count-1) + df_learned["gamma"])/count
-    df_act["epsilon"] = ((df_act["epsilon"])*(count-1) + df_learned["epsilon"])/count
-
-    return df_act
-
 # learning_df function combines all the historical usages and generates a common frame
 # to learn a regressor and a classifier
 # Input:

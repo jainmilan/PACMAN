@@ -26,8 +26,8 @@ def get_time(date_str, time_str):
 if __name__ == "__main__":
 
     # Data set to analyse
-    data_dir = "../Data/Apartment/"
-    rooms = ["01000000", "02020302", "04050101", "05050203", "06060206", "07070304", "08090104"]
+    data_dir = "sample_data/"
+    rooms = ["rx"]
     
     # To learn the parameters of a thermal model, PACMAN requires a regressor which are defined in 
     # models directory. To access any model, user need to call model.py. 
@@ -67,13 +67,13 @@ if __name__ == "__main__":
                       "/pusages_" + str(pusages) + "/sr_" + str(sampling_rate) + "/"
 
             # Update directories with suffix
-            dir_pred = "../Results/Prediction/" + suffix
-            dir_learn = "../Results/Learning/" + suffix
-            dir_estimate = "../Results/Estimation/" + suffix
+            dir_pred = "results/prediction/" + suffix
+            dir_learn = "results/learning/" + suffix
+            dir_estimate = "results/estimation/" + suffix
 
             # Input Data
-            usages = pd.read_csv(data_dir + room + "_Usages.csv", index_col=["id"]) # Meta Data
-            data = pd.read_csv(data_dir + room + "_updated.csv", index_col=[0])     # Temperature and energy consumption data
+            usages = pd.read_csv(data_dir + room + "_meta.csv", index_col=["id"]) # Meta Data
+            data = pd.read_csv(data_dir + room + "_data.csv", index_col=[0])     # Temperature and energy consumption data
 
             # Resample intermediate data to 1 second frequency for alignment
             idx = pd.to_datetime(data.index, unit='s').tz_localize('UTC').tz_convert('Asia/Kolkata')

@@ -27,15 +27,14 @@ def get_time(date_str, time_str):
 if __name__ == "__main__":
 
     # Data set to analyse
-    data_dir = "../Data/Apartment/"
-    rooms = ["01000000", "02020302", "04050101", "05050203", "06060206", "07070304", "08090104"]
+    data_dir = "sample_data/"
+    rooms = ["rx"]
 
     # Desired sampling rate of data
     sampling_rate = '2T'
 
     # Stats to evaluate the estimation accuracy
     df_est_stats = pd.DataFrame()
-    df_est_stats_rbias = pd.DataFrame()
 
     # Iterate through the data from each room
     for room in rooms:
@@ -44,11 +43,11 @@ if __name__ == "__main__":
         suffix = room + "/sr_" + str(sampling_rate) + "/"
 
         # Update directories with suffix
-        dir_estimate = "../Results/Estimation/" + suffix
+        dir_estimate = "results/estimation/" + suffix
 
         # Input Data
-        usages = pd.read_csv(data_dir + room + "_Usages.csv", index_col=["id"])
-        data = pd.read_csv(data_dir + room + "_updated.csv", index_col=[0])
+        usages = pd.read_csv(data_dir + room + "_meta.csv", index_col=["id"])
+        data = pd.read_csv(data_dir + room + "_data.csv", index_col=[0])
 
         # Resample intermediate data to 1 second frequency for alignment
         idx = pd.to_datetime(data.index, unit='s').tz_localize('UTC').tz_convert('Asia/Kolkata')
@@ -122,11 +121,8 @@ if __name__ == "__main__":
             # Generate estimation statistics and update the stat frame - df_est_stats, df_est_stats_rbias
             df_temp_est_stats = stats.analyze_est(df_est.status, df_est["status_est"], room, usage, usage_act,
                                                   Tset, prated, manufacturer)
-            df_temp_est_stats_rbias = stats.analyze_est(df_est.status, df_est["status_rbias"], room, usage, usage_act,
-                                                  Tset, prated, manufacturer)
 
             df_est_stats = pd.concat([df_est_stats, df_temp_est_stats])
-            df_est_stats_rbias = pd.concat([df_est_stats_rbias, df_temp_est_stats_rbias])
 
 
         # Create directory if doesn't exist and save the intermediatory stats
@@ -135,7 +131,6 @@ if __name__ == "__main__":
             os.makedirs(dir_stats)
 
         df_est_stats.to_csv(dir_stats + "stats_est.csv")
-        df_est_stats_rbias.to_csv(dir_stats + "stats_est_rbias.csv")
 
     # Create directory if doesn't exist and save the final stats
     dir_res = "results/"
@@ -143,4 +138,3 @@ if __name__ == "__main__":
         os.makedirs(dir_res)
     
     df_est_stats.to_csv(dir_res + "stats_est.csv")
-    df_est_stats_rbias.to_csv(dir_res + "stats_est_rbias.csv")
