@@ -212,7 +212,7 @@ def run_regressor_classifier_model_3(df_pred, Tset, fregr, fclass):
 
 
 # run_regressor_classifier_model_4 is the fourth thermal model implemented in PACMAN which is 
-# T_int[t+1] - T_int[t] = alpha * T_int[t] + beta * S[t] + epsilon
+# T_int[t+1] = alpha * T_int[t] + beta * S[t] + epsilon
 # Terminology:
 #   alpha = leakage rate
 #   beta = cooling rate
@@ -280,7 +280,7 @@ def run_regressor_classifier_model_4(df_pred, Tset, fregr, fclass):
 # run_regressor_classifier_model_5 uses the same thermal model as the fourth thermal model but 
 # uses threshold based state prediction instead of a learned classifier. Following is the implemented 
 # thermal model for the scenario.
-# T_int[t+1] - T_int[t] = alpha * T_int[t] + beta * S[t] + epsilon
+# T_int[t+1] = alpha * T_int[t] + beta * S[t] + epsilon
 # Terminology:
 #   alpha = leakage rate
 #   beta = cooling rate
