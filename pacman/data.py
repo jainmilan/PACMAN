@@ -14,16 +14,18 @@ USAGETHRESHOLD = 2000
 INITIALCUTOFF = 300	# Padding across the estimated on and off times of AC
 
 # extract_usage function is designed to take out an AC data from the complete data frame 
-# for a given set of parameters which are as follows:
-# data - complete data
-# current_usage_on_time - estimated time when user turned on the AC
-# current_usage_off_time - estimated time when user turned off the AC
-# start_index - 
-# usage_count - counter to track the number of AC usages encountered in the dataset
-# i - 
-# usage_csv_files - 
-# usage_png_files - 
-# This function returns the updated start_index and the usage_count after extracting AC usage data.
+# Input:
+# 	data - complete data
+# 	current_usage_on_time - estimated time when user turned on the AC
+# 	current_usage_off_time - estimated time when user turned off the AC
+# 	start_index - list of start times of all the usages
+# 	usage_count - counter to track the number of AC usages encountered in the dataset
+# 	i - start time of the current usage
+# 	usage_csv_files - 
+# 	usage_png_files - 
+# Output: Generate AC usage file and corresponding temperature plot
+# 	start_index - 
+# 	usage_count - updated counter to track the number of AC usages encountered in the dataset
 def extract_usage(data, current_usage_on_time, current_usage_off_time, \
 				start_index, usage_count, i, usage_csv_files, usage_png_files):
 	
@@ -60,13 +62,16 @@ def extract_usage(data, current_usage_on_time, current_usage_off_time, \
 	# Return the updated counters
 	return start_index, usage_count
 
-# Extract AC usages from a specific file
+# extract_AC_usages_file reads a data file (having complete data) and extracts
+# Input:
+# 	data_file - address of file having complete data
+# Output: NIL
 def extract_AC_usages_file(data_file):
 	
-	# WARNING! - Pending validation of file and its data
-
 	# Read data from the file
 	data = pandas.read_csv(data_file, index_col=0)
+
+	# Name of CSV file
 	filename = os.path.basename(data_file).split(".")[0]
 	
 	# IMPROVEMENT: Instead of passing single invalid entries, we can provide a list and program can match all 
@@ -84,9 +89,9 @@ def extract_AC_usages_file(data_file):
 	init_time = data.index.values[0]
 
 	# USELESS: Currently looks like that this information is not required
-#	d = {'OnTime': on_time, 'OffTime': off_time}
-#	on_off_data = pandas.DataFrame(data = d)
-#	on_off_data.to_csv(OnOffTimeFile,index_label="S.No")
+	#	d = {'OnTime': on_time, 'OffTime': off_time}
+	#	on_off_data = pandas.DataFrame(data = d)
+	#	on_off_data.to_csv(OnOffTimeFile,index_label="S.No")
 
 	# Index to maintain start time of each AC usage - A usage is a period for which AC remain turned on. 
 	start_index = []
@@ -110,7 +115,6 @@ def extract_AC_usages_file(data_file):
 
 	# Loop to iterate over each AC compressor cycle on time. Algorithm says, whenever compressor takes more than
 	# USAGETHRESHOLD (in Seconds) to turn on after being turned off, then it is a seprate AC usage. 
-
 	for i in range(1, len(on_time)):
 		
 		next_on_time = on_time[i]
@@ -139,8 +143,10 @@ def extract_AC_usages_file(data_file):
 	start_index, usage_count = extract_usage(data, current_usage_on_time, current_usage_off_time, \
 				start_index, usage_count, i, usage_csv_files, usage_png_files)
 
-# WARNING! - Check for input validation
-# Iterate over all data files present in a directory if given as a path
+# extract_AC_usages_file iterates over all the data files present in a directory if given as a path
+# Input:
+# 	data_dir - address of directory having all the files where each file indicates data from one home
+# Output: NIL
 def extract_AC_usages_dir(data_dir):
 	# Get files as a list present in provided directory
 	path_files = data_dir + "*.csv"
@@ -148,10 +154,11 @@ def extract_AC_usages_dir(data_dir):
 	files = glob.glob(path_files)
 	files.sort()
 	
-	# Iterate through each file
+	# Iterate through each file 
 	for data_file in files:
 		extract_AC_usages_file(data_file)
 
+# Might be depricated
 def get_actual_data(prediction_file, r):
 	actual_data = pandas.read_csv(prediction_file, index_col=0)
 	
