@@ -102,20 +102,42 @@ def analyze(actual, predicted, room, usage, model_type, regressor, classifier, c
     return stats
 
 
+# analyze_est function generate stats regarding the estimation and returns all the stats in the form
+# of a pandas dataframe
+# Input:
+#   actual - ground truth energy consumption
+#   predicted - predicted energy consumption
+#   room - room number
+#   usage - AC usage number
+#   usage_act - actual id of the AC usage
+#   Tset - AC set temperature
+#   prated - AC's rated power consumption
+#   manufacturer - AC's manufacturer 
+# Output:
+#   stats - output frame having evaluation of estimation on various metrics
 def analyze_est(actual, predicted, room, usage, usage_act, Tset, prated, manufacturer):
+
+    # Initialise a stats frame
     stats = pd.DataFrame()
 
+    # Actual and estimated energy consumption of the AC
     E_act = actual.sum()
     E_est = predicted.sum()
 
+    # Deviation, absolute deviation, and accuracy numbers for the prediction
     error = E_act - E_est
     error_abs = np.abs(error)
     acc = 100 - (error_abs*100.0)/(E_act)
-    print acc
+
+    # Precision, recall, fscore, and confusion matrix to evaluate the accuracy in 
+    # predicting AC compressor state
     prfs = precision_recall_fscore_support(actual.values, predicted.values)
     cm = confusion_matrix(actual.values, predicted.values)
 
+    # Estimation count
     approach = 1
+
+    # Write the stats
     stats.loc[room + "_" + str(usage) + "_" + str(approach), "Room"] = room
     stats.loc[room + "_" + str(usage) + "_" + str(approach), "Usage"] = usage
     stats.loc[room + "_" + str(usage) + "_" + str(approach), "UsageAct"] = usage_act
@@ -128,6 +150,7 @@ def analyze_est(actual, predicted, room, usage, usage_act, Tset, prated, manufac
     stats.loc[room + "_" + str(usage) + "_" + str(approach), "PRated"] = prated
     stats.loc[room + "_" + str(usage) + "_" + str(approach), "Manufacturer"] = manufacturer
 
+    # Check to avoid null values
     if len(prfs[0]) == 2:
         stats.loc[room + "_" + str(usage) + "_" + str(approach), "Precision[0]"] = np.round(prfs[0][0]*100.0, 2)
         stats.loc[room + "_" + str(usage) + "_" + str(approach), "Precision[1]"] = np.round(prfs[0][1]*100.0, 2)
@@ -161,4 +184,5 @@ def analyze_est(actual, predicted, room, usage, usage_act, Tset, prated, manufac
         stats.loc[room + "_" + str(usage) + "_" + str(approach), "ConfusionMatrix[10]"] = -1
         stats.loc[room + "_" + str(usage) + "_" + str(approach), "ConfusionMatrix[11]"] = cm[0][0]
 
+    # Return the stats frame
     return stats

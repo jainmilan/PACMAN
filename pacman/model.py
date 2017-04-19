@@ -1,9 +1,10 @@
 __author__ = 'milan'
 
+# Inbuilt libraries
 import os
 from sklearn.externals import joblib
 
-# Models
+# Inbuild machine learning models
 from sklearn import linear_model
 from sklearn.svm import LinearSVR, LinearSVC
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -64,7 +65,7 @@ def run_classifier(feature_matrix, Y, classifier, class_type, class_dir):
 # Output:
 #   True - If parameters are properly learned
 def run_regressor(feature_matrix, Y, regressor, regress_type, regress_dir):
-    
+
     # Initialization
     regr = None
 

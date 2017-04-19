@@ -13,6 +13,7 @@ from pacman import predict, learn, stats
 
 # String to datetime conversion
 def get_time(date_str, time_str):
+
     # Get time object from the string
     time_object = pd.to_datetime(date_str + " " + time_str, dayfirst=True).tz_localize('Asia/Kolkata')
 
@@ -82,11 +83,11 @@ if __name__ == "__main__":
             # Preprocessing [Select only valid usages]
             usages = usages[usages["type"] == 1]
 
-            # Meta Info about Usage
+            # Meta information about the AC usage
             prated = data["prated"].unique()[0]                 # Rated power consumption of AC
             manufacturer = data["manufacturer"].unique()[0]     # AC Manufacturer
 
-            # Start Date and Time
+            # Start date and time
             sdate = usages["sdate"].iloc[0]
             stime = usages["stime"].iloc[0]
             sidx = get_time(sdate, stime)   # Convert from string to datetime
@@ -112,12 +113,12 @@ if __name__ == "__main__":
                     print "Invalid usage-%d" %(usage)
                     continue
 
-                # Start Date and Time
+                # Start date and time
                 sdate = usages["sdate"].iloc[usage]
                 stime = usages["stime"].iloc[usage]
                 sidx = get_time(sdate, stime)
 
-                # Finish Date and Time
+                # Stop date and time
                 fdate = usages["fdate"].iloc[usage]
                 ftime = usages["ftime"].iloc[usage]
                 fidx = get_time(fdate, ftime)
@@ -126,7 +127,7 @@ if __name__ == "__main__":
                 Tset = usages["Tset"].iloc[usage]
                 usage_act = usages["usage"].iloc[usage]
 
-                # Extract current usage
+                # Extract current AC usage
                 df = data.loc[sidx:fidx][["int_temperature", "ext_temperature", "power", "status"]]
 
                 # Resample to the given sampling rate
@@ -134,6 +135,7 @@ if __name__ == "__main__":
 
                 # Skip prediction for first usage
                 if not done_regr is None:
+                    
                     # Parameters learned for regressor and classifier (NA for first time prediction)
                     file_regr = dir_learn + 'models/regr/' + regressor + '_' + str(regr_type) + '.pkl'
                     file_classifier = dir_learn + 'models/class/' + classifier + '_' + str(class_type) + '.pkl'
@@ -197,10 +199,16 @@ if __name__ == "__main__":
                 elif regr_type == 5:
                     done_regr = learn.learn_regressor_model_5(df_learn, regressor, dir_regr)
 
+            # Create directory if doesn't exist and save the intermediatory stats
             dir_stats = dir_pred + "stats/"
             if not os.path.exists(dir_stats):
                 os.makedirs(dir_stats)
 
             df_stats.to_csv(dir_stats + "stats.csv")
 
-    df_stats.to_csv("stats_10.csv")
+    # Create directory if doesn't exist and save the final stats
+    dir_res = "results/"
+    if not os.path.exists(dir_res):
+        os.makedirs(dir_res)
+    
+    df_stats.to_csv(dir_res + "stats_10.csv")

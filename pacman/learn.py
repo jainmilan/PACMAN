@@ -1,3 +1,5 @@
+__author__ = 'milan'
+
 # Inbuilt libraries
 import os
 import sys
@@ -7,7 +9,6 @@ import numpy
 import pandas
 
 # Custom modules
-from .models import lr, svm, lp, knn, decision_tree, random_forest
 from model import run_classifier, run_regressor
 
 
