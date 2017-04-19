@@ -138,7 +138,7 @@ if __name__ == "__main__":
                     file_regr = dir_learn + 'models/regr/' + regressor + '_' + str(regr_type) + '.pkl'
                     file_classifier = dir_learn + 'models/class/' + classifier + '_' + str(class_type) + '.pkl'
 
-                    # Predict temperature and status
+                    # Predict temperature and AC compressor state
                     if regr_type == 1:
                         df_pred = predict.run_regressor_classifier_model_1(df_resampled, Tset, file_regr, file_classifier)
                     elif regr_type == 2:
@@ -150,17 +150,17 @@ if __name__ == "__main__":
                     elif regr_type == 5:
                         df_pred = predict.run_regressor_classifier_model_5(df_resampled, Tset, file_regr)
 
-                    # Bias Estimation
+                    # Estimate bias in AC energy consumption
                     bias = bias + (df_pred.status.sum() - df_pred.S_pred.sum())
 
-                    # Results of Prediction
-                    print usage_act
+                    # Create directory to save prediction results
                     dir_predictions = dir_pred + "CSV/"
                     if not os.path.exists(dir_predictions):
                         os.makedirs(dir_predictions)
 
                     df_pred.to_csv(dir_predictions + "usage_" + str(usage_act) + ".csv")
 
+                    # Generate prediction statistics and update the stat frame - df_stats
                     df_tempstats = stats.analyze(df_pred.status, df_pred.S_pred, room, usage, regr_type, regressor,
                                                  classifier, count, pusages, usage_act, Tset, prated, manufacturer)
                     df_stats = pd.concat([df_stats, df_tempstats])
@@ -172,14 +172,16 @@ if __name__ == "__main__":
                 df_learn = learn.learning_df(usages=usages, last_usage=usage, data=data, sampling_rate = sampling_rate,
                                              pusages=pusages)
 
-                # Skip first usage
+                # Ignore empty training dataframe
                 if df_learn.empty:
                     print "Nothing to learn from usage-%d" %(usage)
                     continue
 
+                # Directory to learn regression and classifier
                 dir_regr = dir_learn + 'models/regr/'
                 dir_class = dir_learn + 'models/class/'
 
+                # Learn the regressor and the classifier
                 if regr_type == 1:
                     done_regr = learn.learn_regressor_model_1(df_learn, regressor, dir_regr)
                     done_class = learn.learn_classifier_model_1(df_learn, classifier, dir_class)
